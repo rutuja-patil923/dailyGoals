@@ -1,23 +1,63 @@
-import logo from './logo.svg';
+import { Button, FormControl , InputLabel , Input} from '@material-ui/core';
+import React , { useState ,useEffect} from 'react';
 import './App.css';
+import Todo from './Todo';
+import db from './firebase'
+import firebase from 'firebase';
 
 function App() {
+
+  // short meomory
+  // const [todos, settodos] = useState(['task1','task2']);
+
+  const [todos, settodos] = useState([]);
+  const [input, setinput] = useState('')
+  console.log(input)
+
+  // when the app loads we need to listen to the database and fetch new todos as they get added/removed
+  useEffect(() => {
+      db.collection('todos').orderBy('timestamp','desc').onSnapshot(snapshot => {
+      console.log(snapshot.docs.map(doc => doc.data()))
+      settodos(snapshot.docs.map(doc => doc.data().todo))
+    })
+  }, [])
+
+
+  const addTodo = (event)=>{
+    // this will fire off when we click the button
+    // preventing default action of refreshing
+    event.preventDefault()
+    console.log("inside fn")
+
+    db.collection('todos').add({
+      todo : input,
+      timestamp : firebase.firestore.FieldValue.serverTimestamp()
+    })
+    
+    settodos([...todos,input])
+    setinput('')
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Hello Rutuja!</h1>
+      {/* wrapped in form because when we enter button it will submit */}
+      <form>
+        {/* <input value={input} onChange={event=>setinput(event.target.value)}/> */}
+        <FormControl>
+          <InputLabel>Write a todo</InputLabel>
+          <Input value={input} onChange={event=>setinput(event.target.value)}/>
+        </FormControl>
+        <Button type="submit" disabled={!input} onClick={addTodo} variant="contained" color="primary">
+          Add to-do
+        </Button>
+        {/* <button type="submit" onClick={addTodo}>to-do</button> */}
+      </form>
+      
+      <ui>
+        {todos.map((todo)=>
+           <Todo text = {todo} />
+        )}
+      </ui>
     </div>
   );
 }
