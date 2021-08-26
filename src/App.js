@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
       db.collection('todos').orderBy('timestamp','desc').onSnapshot(snapshot => {
       console.log(snapshot.docs.map(doc => doc.data()))
-      settodos(snapshot.docs.map(doc => doc.data().todo))
+      settodos(snapshot.docs.map(doc =>({id : doc.data().id,todo : doc.data().todo})))
     })
   }, [])
 
@@ -55,7 +55,7 @@ function App() {
       
       <ui>
         {todos.map((todo)=>
-           <Todo text = {todo} />
+           <Todo todo = {todo} />
         )}
       </ui>
     </div>
