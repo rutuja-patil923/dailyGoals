@@ -51,7 +51,7 @@ function App() {
   }
   return (
     <div className="App">
-      <h1>Hello Rutuja!</h1>
+      <h1>Be Disciplined!</h1>
       {/* wrapped in form because when we enter button it will submit */}
       <form>
         {/* <input value={input} onChange={event=>setinput(event.target.value)}/> */}

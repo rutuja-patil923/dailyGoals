@@ -1,8 +1,31 @@
-import { Button, List, ListItem, ListItemAvatar, ListItemText} from '@material-ui/core'
-import React from 'react'
+import { Button, List, ListItem, ListItemAvatar, ListItemText, Modal} from '@material-ui/core'
+import React , { useState }from 'react'
 import './Todo.css'
 import db from './firebase'
+import DeleteIcon from '@material-ui/icons/Delete';
+import { makeStyles } from '@material-ui/core';
+
+
+const useStyles = makeStyles((theme) => ({
+    paper : {
+        position: 'absolute',
+        width : 400,
+        backgroundColor : theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2,4,3),
+    },
+}))
+
 const Todo = (props) => {
+
+    const [open, setopen] = useState(false)
+    const classes = useStyles()
+    const [input, setinput] = useState('')
+
+    const handleOpen = () => {
+        setopen(true)
+    }
     console.log(props)
     const deleteTodo =(event) => {
         console.log("button clicked!")
@@ -14,16 +37,40 @@ const Todo = (props) => {
         // console.log(docRefId)
 
     }
+
+    const updateTodo = () => {
+        db.collection('todos').doc(props.todo.id).set({
+            todo : input 
+        },{merge:true})
+        setopen(false)
+        setinput('')
+    }
+
+
     return (
-        <List className="todo__list">
-            <ListItem>
-                <ListItemAvatar>
-                </ListItemAvatar>
-                <ListItemText primary={props.todo.todo} secondary="dummy deadline!"/>
-            </ListItem>
-            {/* <li>{props.text}</li> */}
-            <Button onClick={deleteTodo}>Delete Me:)</Button>
-        </List>
+        <>
+            <Modal open={open} onClose={e => setopen(false)}  >
+            {/* {body} */}
+                <div className={classes.paper}>
+                    <h1>I'm Modal</h1>
+                    <input placeholder={props.todo.todo} value={input} onChange = {event => setinput(event.target.value)}/>
+                    <Button onClick={updateTodo}>Dummy</Button>
+                </div>
+            </Modal>
+            
+            <List className="todo__list">
+                <ListItem>
+                    <ListItemAvatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={props.todo.todo} secondary="Timeline"/>
+                </ListItem>
+                {/* <li>{props.text}</li> */}
+                {/* <Button onClick={deleteTodo}>Delete Me</Button> */}
+                <button onClick={e => setopen(true)}>Edit</button>
+                <DeleteIcon onClick={deleteTodo}/>
+            </List>
+        </>
+        
     )
 }
 
