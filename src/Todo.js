@@ -7,8 +7,12 @@ const Todo = (props) => {
     const deleteTodo =(event) => {
         console.log("button clicked!")
         // var id = db.collection('todos').doc(props.todo.todo).getId();
-        // console.log(id)
-        // db.collection('todos').doc(props.todo.id).delete()
+        console.log(props.todo.id)
+        db.collection('todos').doc(props.todo.id).delete()
+        // const ref = db.collection('todos').where('todo', '==', props.todo.todo)
+        // const docRefId = ref.id;
+        // console.log(docRefId)
+
     }
     return (
         <List className="todo__list">

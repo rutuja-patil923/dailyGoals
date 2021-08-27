@@ -12,13 +12,13 @@ function App() {
 
   const [todos, settodos] = useState([]);
   const [input, setinput] = useState('')
-  console.log(input)
+  // console.log(input)
 
   // when the app loads we need to listen to the database and fetch new todos as they get added/removed
   useEffect(() => {
       db.collection('todos').orderBy('timestamp','desc').onSnapshot(snapshot => {
-      console.log(snapshot.docs.map(doc => doc.data()))
-      settodos(snapshot.docs.map(doc =>({id : doc.data().id,todo : doc.data().todo})))
+      // console.log(snapshot.docs.map(doc => doc.data()))
+      settodos(snapshot.docs.map(doc =>({id : doc.id,todo : doc.data().todo})))
     })
   }, [])
 
@@ -29,12 +29,24 @@ function App() {
     event.preventDefault()
     console.log("inside fn")
 
-    db.collection('todos').add({
+    // db.collection('todos').add({
+    //   todo : input,
+    //   timestamp : firebase.firestore.FieldValue.serverTimestamp()
+    // })
+
+    db.collection("todos").add({
       todo : input,
       timestamp : firebase.firestore.FieldValue.serverTimestamp()
     })
+    .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id);
+
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
     
-    settodos([...todos,input])
+    // settodos([...todos,input])
     setinput('')
   }
   return (
